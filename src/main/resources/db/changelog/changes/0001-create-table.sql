@@ -11,7 +11,9 @@ CREATE TABLE IF NOT EXISTS vehicle (
     fuel VARCHAR(50) NOT NULL,
     engine_capacity VARCHAR(50) NOT NULL,
     year_of_production SMALLINT(4) NOT NULL,
-    vehicle_registration_date DATE
+    vehicle_registration_date DATE,
+    owner_identity_number VARCHAR(50),
+    FOREIGN KEY (owner_identity_number) REFERENCES owner(owner_identity_number),
 
 );
 
@@ -25,6 +27,6 @@ CREATE TABLE IF NOT EXISTS owner (
     owner_firstname VARCHAR(25) NOT NULL,
     owner_lastname VARCHAR(25) NOT NULL,
     owner_address VARCHAR(100) NOT NULL,
-    owner_email VARCHAR(100) NOT NULL
+    owner_email VARCHAR(100) NOT NULL,
 
 );

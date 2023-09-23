@@ -4,6 +4,7 @@ import com.example.ldc.vehicle.Vehicle;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -15,18 +16,19 @@ import java.util.List;
 public class Owner {
 
     @Id
-    @NonNull
     private String ownerIdentityNumber;
-    @NonNull
     private String ownerFirstname;
-    @NonNull
     private String ownerLastname;
-    @NonNull
     private String ownerAddress;
-    @NonNull
     private String ownerEmail;
-    @NonNull
     @OneToMany(mappedBy = "owner", cascade= CascadeType.ALL)
-    private List<Vehicle> vehicles;
+    private List<Vehicle> vehiclesList;
+
+    public void addVehicle(Vehicle vehicle) {
+        if (vehiclesList == null) {
+            vehiclesList = new ArrayList<>();
+        }
+        vehiclesList.add(vehicle);
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.example.ldc.repository;
+package com.example.ldc.vehicle;
 
 import com.example.ldc.vehicle.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -26,11 +26,7 @@ public class Vehicle {
     private String engineCapacity;
     private int yearOfProduction;
     private LocalDateTime vehicleRegistrationDate;
-
     @ManyToOne
-    @JoinColumn(name = "ownerIdentityNumber")
+    @JoinColumn(name = "owner_identity_number")
     private Owner owner;
-
-
-
 }

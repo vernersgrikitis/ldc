@@ -1,8 +1,7 @@
-package com.example.ldc.controller;
+package com.example.ldc.vehicle;
 
 
-import com.example.ldc.service.VehicleService;
-import com.example.ldc.vehicle.addVehicleRequest;
+import com.example.ldc.clients.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class VehicleController {
 
-    private final VehicleService vehicleService;
+    private final ClientService clientService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public void saveCar(@RequestBody addVehicleRequest request) {
-        vehicleService.saveVehicle(request);
+    public void saveCar(@RequestBody AddVehicleRequest request) {
+        clientService.saveVehicle(request);
     }
+
 }

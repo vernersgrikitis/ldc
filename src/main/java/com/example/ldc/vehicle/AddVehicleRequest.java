@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class addVehicleRequest {
+public class AddVehicleRequest {
 
     @NonNull
     private String vinNumber;
