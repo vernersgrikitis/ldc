@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -26,8 +27,6 @@ public class AddVehicleRequest {
     private String engineCapacity;
     @NonNull
     private Integer yearOfProduction;
-    @NonNull
-    private LocalDate vehicleRegistrationDate;
     @NonNull
     private Owner owner;
 }

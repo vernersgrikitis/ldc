@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class Vehicle {
 
     @Id
+    @Column(name = "vin_number")
     private String vinNumber;
     private String registrationNumber;
     private String manufacturer;
@@ -25,8 +26,9 @@ public class Vehicle {
     private String fuel;
     private String engineCapacity;
     private int yearOfProduction;
+    @Column(name = "vehicle_registration_date")
     private LocalDateTime vehicleRegistrationDate;
-    @ManyToOne
-    @JoinColumn(name = "owner_identity_number")
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Owner owner;
+
 }

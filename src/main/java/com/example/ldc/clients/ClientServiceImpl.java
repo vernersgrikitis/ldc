@@ -8,11 +8,8 @@ import com.example.ldc.vehicle.AddVehicleRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -24,19 +21,21 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void saveVehicle(AddVehicleRequest request) {
-        addVehicleToOwner(request);
+        Vehicle vehicle = addVehicleToOwner(request);
         isOwnerExist(request);
-
+        saveVehicle(vehicle);
     }
 
     public void isOwnerExist(AddVehicleRequest request) {
         Optional<Owner> optionalOwner = ownerRepository
-                .findOwnerByOwnerIdentityNumber
-                        (request.getOwner().getOwnerIdentityNumber());
+                .findOwnerByIdentityNumber
+                        (request.getOwner().getIdentityNumber());
 
         if (optionalOwner.isPresent()) {
             Owner owner = optionalOwner.get();
-            owner.addVehicle(addVehicleToOwner(request));
+            Vehicle vehicle = createVehicle(request);
+            saveVehicle(vehicle);
+            owner.addVehicle(vehicle);
         } else {
             Owner owner = createOwner(request);
             owner.addVehicle(addVehicleToOwner(request));
@@ -51,7 +50,9 @@ public class ClientServiceImpl implements ClientService {
                             + "already registered! ");
         }
         Vehicle vehicle = createVehicle(request);
-        saveVehicle(vehicle);
+        Owner owner = getOrCreateOwner(request);
+        vehicle.setOwner(owner);
+        owner.addVehicle(vehicle);
         return vehicle;
     }
 
@@ -84,13 +85,20 @@ public class ClientServiceImpl implements ClientService {
 
     private Owner createOwner(AddVehicleRequest request) {
         return new Owner(
-                request.getOwner().getOwnerIdentityNumber(),
-                request.getOwner().getOwnerFirstname(),
-                request.getOwner().getOwnerLastname(),
-                request.getOwner().getOwnerAddress(),
-                request.getOwner().getOwnerEmail(),
-                request.getOwner().getVehiclesList()
+                request.getOwner().getIdentityNumber(),
+                request.getOwner().getFirstName(),
+                request.getOwner().getLastName(),
+                request.getOwner().getAddress(),
+                request.getOwner().getEmail(),
+                request.getOwner().getVehicles()
         );
+    }
+
+    private Owner getOrCreateOwner(AddVehicleRequest request) {
+        Optional<Owner> optionalOwner = ownerRepository
+                .findOwnerByIdentityNumber(request.getOwner().getIdentityNumber());
+
+        return optionalOwner.orElseGet(() -> createOwner(request));
     }
 
 
