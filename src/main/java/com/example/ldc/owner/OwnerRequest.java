@@ -1,23 +1,43 @@
 package com.example.ldc.owner;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import java.util.Objects;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class OwnerRequest {
 
-    @NonNull
-    private String ownerIdentityNumber;
-    @NonNull
-    private String ownerFirstname;
-    @NonNull
-    private String ownerLastname;
-    @NonNull
-    private String ownerAddress;
-    @NonNull
-    private String ownerEmail;
+    private String identityNumber;
+
+    public OwnerRequest(String identityNumber) {
+        this.identityNumber = identityNumber;
+    }
+
+    public OwnerRequest() {
+    }
+
+    public String getIdentityNumber() {
+        return identityNumber;
+    }
+
+    public void setIdentityNumber(String identityNumber) {
+        this.identityNumber = identityNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OwnerRequest that = (OwnerRequest) o;
+        return Objects.equals(identityNumber, that.identityNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(identityNumber);
+    }
+
+    @Override
+    public String toString() {
+        return "OwnerRequest{" +
+                "identityNumber='" + identityNumber + '\'' +
+                '}';
+    }
 }

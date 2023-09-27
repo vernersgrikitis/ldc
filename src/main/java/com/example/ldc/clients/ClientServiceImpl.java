@@ -2,103 +2,93 @@ package com.example.ldc.clients;
 
 import com.example.ldc.owner.Owner;
 import com.example.ldc.owner.OwnerRepository;
+import com.example.ldc.owner.OwnerRequest;
 import com.example.ldc.vehicle.Vehicle;
 import com.example.ldc.vehicle.VehicleRepository;
 import com.example.ldc.vehicle.AddVehicleRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
 public class ClientServiceImpl implements ClientService {
 
     private final VehicleRepository vehicleRepository;
     private final OwnerRepository ownerRepository;
 
+    public ClientServiceImpl(VehicleRepository vehicleRepository, OwnerRepository ownerRepository) {
+        this.vehicleRepository = vehicleRepository;
+        this.ownerRepository = ownerRepository;
+    }
+
     @Override
-    public void saveVehicle(AddVehicleRequest request) {
-        Vehicle vehicle = addVehicleToOwner(request);
-        isOwnerExist(request);
-        saveVehicle(vehicle);
-    }
-
-    public void isOwnerExist(AddVehicleRequest request) {
-        Optional<Owner> optionalOwner = ownerRepository
-                .findOwnerByIdentityNumber
-                        (request.getOwner().getIdentityNumber());
-
-        if (optionalOwner.isPresent()) {
-            Owner owner = optionalOwner.get();
-            Vehicle vehicle = createVehicle(request);
-            saveVehicle(vehicle);
-            owner.addVehicle(vehicle);
-        } else {
-            Owner owner = createOwner(request);
-            owner.addVehicle(addVehicleToOwner(request));
-        }
-    }
-
-    public Vehicle addVehicleToOwner(AddVehicleRequest request) {
-        if (vehicleRepository.findVehicleByVinNumber(request.getVinNumber()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Vehicle with VIN number "
-                            + request.getVinNumber()
-                            + "already registered! ");
-        }
+    public void getVehicleRequest(AddVehicleRequest request) {
         Vehicle vehicle = createVehicle(request);
-        Owner owner = getOrCreateOwner(request);
-        vehicle.setOwner(owner);
-        owner.addVehicle(vehicle);
+        Owner owner = createOwner(request);
+        if(vehicleRepository.existsById(vehicle.getVinNumber())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Vehicle with VIN number "
+                    + vehicle.getVinNumber() + " already exist!");
+        }
+        if(ownerRepository.existsById(request.getOwner().getIdentityNumber())) {
+//            owner.addVehicle(vehicle);
+            saveOwner(owner);
+            vehicle.setOwner(owner);
+            saveVehicle(vehicle);
+        } else {
+            Owner ownerToSave = createOwner(request);
+            Vehicle vehicleToSave = createVehicle(request);
+            vehicleToSave.setOwner(ownerToSave);
+            saveOwner(ownerToSave);
+            saveVehicle(vehicleToSave);
+        }
+    }
+
+    @Override
+    public Owner getOwnerById(OwnerRequest request) {
+        String ownerId = request.getIdentityNumber();
+        Owner owner;
+        if(ownerRepository.existsById(ownerId)) {
+            owner = ownerRepository.findOwnerByIdentityNumber(ownerId);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Owner not registered! ");
+        }
+        return owner;
+    }
+
+    @Override
+    public void saveVehicle(Vehicle vehicle) {
+        vehicleRepository.save(vehicle);
+    }
+
+    @Override
+    public void saveOwner(Owner owner) {
+        ownerRepository.save(owner);
+    }
+
+
+    private Vehicle createVehicle(AddVehicleRequest request) {
+        Vehicle vehicle = new Vehicle();
+        vehicle.setOwner(request.getOwner());
+        vehicle.setVinNumber(request.getVinNumber());
+        vehicle.setRegistrationNumber(request.getRegistrationNumber());
+        vehicle.setYearOfProduction(request.getYearOfProduction());
+        vehicle.setManufacturer(request.getManufacturer());
+        vehicle.setModel(request.getModel());
+        vehicle.setFuel(request.getFuel());
+        vehicle.setVehicleRegistrationDate(LocalDateTime.now());
+        vehicle.setEngineCapacity(request.getEngineCapacity());
         return vehicle;
     }
 
-    public void saveOwner(AddVehicleRequest request) {
-        Owner owner = createOwner(request);
-        ownerRepository.save(owner);
-        throw new ResponseStatusException(HttpStatus.CREATED,
-                "Client saved successfully! ");
-    }
-
-    public void saveVehicle(Vehicle vehicle) {
-        vehicleRepository.save(vehicle);
-        throw new ResponseStatusException(HttpStatus.CREATED,
-                "Vehicle saved successfully! ");
-    }
-
-    private Vehicle createVehicle(AddVehicleRequest request) {
-        return Vehicle
-                .builder()
-                .vinNumber(request.getVinNumber())
-                .registrationNumber(request.getRegistrationNumber())
-                .manufacturer(request.getManufacturer())
-                .model(request.getModel())
-                .fuel(request.getFuel())
-                .engineCapacity(request.getEngineCapacity())
-                .yearOfProduction(request.getYearOfProduction())
-                .vehicleRegistrationDate(LocalDateTime.now())
-                .build();
-    }
-
     private Owner createOwner(AddVehicleRequest request) {
-        return new Owner(
-                request.getOwner().getIdentityNumber(),
-                request.getOwner().getFirstName(),
-                request.getOwner().getLastName(),
-                request.getOwner().getAddress(),
-                request.getOwner().getEmail(),
-                request.getOwner().getVehicles()
-        );
-    }
-
-    private Owner getOrCreateOwner(AddVehicleRequest request) {
-        Optional<Owner> optionalOwner = ownerRepository
-                .findOwnerByIdentityNumber(request.getOwner().getIdentityNumber());
-
-        return optionalOwner.orElseGet(() -> createOwner(request));
+        Owner owner = new Owner();
+        owner.setFirstName(request.getOwner().getFirstName());
+        owner.setLastName(request.getOwner().getLastName());
+        owner.setEmail(request.getOwner().getEmail());
+        owner.setAddress(request.getOwner().getAddress());
+        owner.setIdentityNumber(request.getOwner().getIdentityNumber());
+        return owner;
     }
 
 
