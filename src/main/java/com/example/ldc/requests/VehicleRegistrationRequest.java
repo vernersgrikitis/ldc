@@ -1,7 +1,6 @@
 package com.example.ldc.requests;
 
 import org.springframework.lang.NonNull;
-import java.time.LocalDateTime;
 
 public record VehicleRegistrationRequest(String vinNumber,
                                          String registrationNumber,
@@ -10,7 +9,7 @@ public record VehicleRegistrationRequest(String vinNumber,
                                          String fuel,
                                          String engineCapacity,
                                          Integer yearOfProduction,
-                                         LocalDateTime vehicleRegistrationDate) {
+                                         SaveClientRequest clientRequest) {
 
     public VehicleRegistrationRequest(@NonNull String vinNumber,
                                       @NonNull String registrationNumber,
@@ -19,7 +18,7 @@ public record VehicleRegistrationRequest(String vinNumber,
                                       @NonNull String fuel,
                                       @NonNull String engineCapacity,
                                       @NonNull Integer yearOfProduction,
-                                      @NonNull LocalDateTime vehicleRegistrationDate) {
+                                      @NonNull SaveClientRequest clientRequest) {
         this.vinNumber = vinNumber;
         this.registrationNumber = registrationNumber;
         this.manufacturer = manufacturer;
@@ -27,20 +26,7 @@ public record VehicleRegistrationRequest(String vinNumber,
         this.fuel = fuel;
         this.engineCapacity = engineCapacity;
         this.yearOfProduction = yearOfProduction;
-        this.vehicleRegistrationDate = vehicleRegistrationDate;
+        this.clientRequest = clientRequest;
     }
 
-    @Override
-    public String toString() {
-        return "VehicleRegistrationRequest{" +
-                "vinNumber='" + vinNumber + '\'' +
-                ", registrationNumber='" + registrationNumber + '\'' +
-                ", manufacturer='" + manufacturer + '\'' +
-                ", model='" + model + '\'' +
-                ", fuel='" + fuel + '\'' +
-                ", engineCapacity='" + engineCapacity + '\'' +
-                ", yearOfProduction=" + yearOfProduction +
-                ", vehicleRegistrationDate=" + vehicleRegistrationDate +
-                '}';
-    }
 }

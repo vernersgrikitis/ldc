@@ -23,15 +23,4 @@ public record SaveClientRequest(String firstName,
         this.dateOfBirth = dateOfBirth;
     }
 
-    @Override
-    public String toString() {
-        return "SaveClientRequest{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                ", identityNumber='" + identityNumber + '\'' +
-                ", dateOfBirth='" + dateOfBirth + '\'' +
-                '}';
-    }
 }

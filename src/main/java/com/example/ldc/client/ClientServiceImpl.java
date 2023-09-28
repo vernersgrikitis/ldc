@@ -51,7 +51,7 @@ public class ClientServiceImpl implements ClientService {
         return createClient(request);
     }
 
-    private Client createClient(SaveClientRequest request) {
+    public Client createClient(SaveClientRequest request) {
         return new Client(
                 request.firstName(),
                 request.lastName(),

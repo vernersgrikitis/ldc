@@ -22,9 +22,11 @@ public class UserController {
 
     @RequestMapping(value = "/save-client", method = RequestMethod.POST)
     public void saveClient(@RequestBody SaveClientRequest request) {
+        String message = "Client with email " + request.email() + " is created successfully! ";
+
         clientService.saveClient(request);
-        throw new ResponseStatusException(HttpStatus.CREATED,
-                "Client with email " + request.email() + " is created successfully! ");
+        throw new ResponseStatusException(HttpStatus.CREATED, message
+        );
     }
 
     @GetMapping("/{email}/data")
@@ -34,9 +36,14 @@ public class UserController {
     }
 
 
-    @ResponseStatus(HttpStatus.CREATED)
+
     @RequestMapping(value = "/save-vehicle", method = RequestMethod.POST)
-    public void saveVehicle(VehicleRegistrationRequest request) {
+    public void saveVehicle(@RequestBody VehicleRegistrationRequest request) {
+        String message = "Vehicle "
+                + request.manufacturer() + " " + request.model() + " with VIN Number "
+                + request.vinNumber() + " registered successfully! ";
+
         vehicleService.saveVehicle(request);
+        throw new ResponseStatusException(HttpStatus.CREATED, message);
     }
 }

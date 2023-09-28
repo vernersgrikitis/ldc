@@ -1,10 +1,10 @@
 package com.example.ldc.vehicle;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.ldc.vehiclehistory.VehicleHistory;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "vehicle")
@@ -21,8 +21,10 @@ public class Vehicle {
     private String engineCapacity;
     private Integer yearOfProduction;
     private LocalDateTime vehicleRegistrationDate;
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
+    private List<VehicleHistory> ownershipHistory;
 
-    public Vehicle(String vinNumber, String registrationNumber, String manufacturer, String model, String fuel, String engineCapacity, Integer yearOfProduction, LocalDateTime vehicleRegistrationDate) {
+    public Vehicle(String vinNumber, String registrationNumber, String manufacturer, String model, String fuel, String engineCapacity, Integer yearOfProduction, LocalDateTime vehicleRegistrationDate, List<VehicleHistory> ownershipHistory) {
         this.vinNumber = vinNumber;
         this.registrationNumber = registrationNumber;
         this.manufacturer = manufacturer;
@@ -31,6 +33,7 @@ public class Vehicle {
         this.engineCapacity = engineCapacity;
         this.yearOfProduction = yearOfProduction;
         this.vehicleRegistrationDate = vehicleRegistrationDate;
+        this.ownershipHistory = ownershipHistory;
     }
 
     public Vehicle() {
@@ -106,6 +109,14 @@ public class Vehicle {
 
     public void setVehicleRegistrationDate(LocalDateTime vehicleRegistrationDate) {
         this.vehicleRegistrationDate = vehicleRegistrationDate;
+    }
+
+    public List<VehicleHistory> getOwnershipHistory() {
+        return ownershipHistory;
+    }
+
+    public void setOwnershipHistory(List<VehicleHistory> ownershipHistory) {
+        this.ownershipHistory = ownershipHistory;
     }
 
     @Override
