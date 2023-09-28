@@ -5,19 +5,19 @@ import com.example.ldc.vehicle.VehicleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 
 @Service
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
 
-    public ClientServiceImpl(ClientRepository clientRepository, VehicleRepository vehicleRepository) {
+    public ClientServiceImpl(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
@@ -33,8 +33,8 @@ public class ClientServiceImpl implements ClientService {
         if(!email.matches(emailRegex)) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is not valid! ");
     }
-        var client = clientRepository.findClientByEmail(email);
-        return clientResponse(client);
+        Optional<Client> client = clientRepository.findClientByEmail(email);
+        return clientResponse(client.get());
     }
 
     private Client checkClient(SaveClientRequest request) {

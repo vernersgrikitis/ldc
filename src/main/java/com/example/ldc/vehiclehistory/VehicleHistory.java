@@ -20,13 +20,13 @@ public class VehicleHistory {
     @ManyToOne
     @JoinColumn(name = "previous_owner_id")
     private Client previousOwner;
-
     @ManyToOne
     @JoinColumn(name = "current_owner_id")
     private Client currentOwner;
 
-    public VehicleHistory(LocalDateTime startOfOwnership, Vehicle vehicle, Client previousOwner, Client currentOwner) {
+    public VehicleHistory(LocalDateTime startOfOwnership, LocalDateTime endOfOwnership, Vehicle vehicle, Client previousOwner, Client currentOwner) {
         this.startOfOwnership = startOfOwnership;
+        this.endOfOwnership = endOfOwnership;
         this.vehicle = vehicle;
         this.previousOwner = previousOwner;
         this.currentOwner = currentOwner;
@@ -37,6 +37,10 @@ public class VehicleHistory {
 
     public Long getHistoryId() {
         return historyId;
+    }
+
+    public void setHistoryId(Long historyId) {
+        this.historyId = historyId;
     }
 
     public LocalDateTime getStartOfOwnership() {

@@ -2,9 +2,7 @@ package com.example.ldc.vehicle;
 
 import com.example.ldc.client.Client;
 import com.example.ldc.client.ClientRepository;
-import com.example.ldc.client.ClientService;
 import com.example.ldc.client.ClientServiceImpl;
-import com.example.ldc.requests.SaveClientRequest;
 import com.example.ldc.requests.VehicleRegistrationRequest;
 import com.example.ldc.vehiclehistory.VehicleHistory;
 import com.example.ldc.vehiclehistory.VehicleHistoryRepository;
@@ -12,8 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
@@ -34,20 +31,38 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public void saveVehicle(VehicleRegistrationRequest request) {
-        vehicleRepository.save(registerVehicle(request));
+    public Vehicle saveVehicle(VehicleRegistrationRequest request) {
+        return registerVehicle(request);
     }
 
     private Vehicle registerVehicle(VehicleRegistrationRequest request) {
-        if (vehicleRepository.existsByVinNumber(request.vinNumber())) {
+        Optional<Vehicle> optionalVehicle = vehicleRepository.getVehicleByVinNumber(request.vinNumber());
+        if (optionalVehicle.isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Vehicle " + request.vinNumber() + " already registered!");
         }
+        return createVehicleHistory(request);
+    }
+
+    private Vehicle createVehicleHistory(VehicleRegistrationRequest request) {
+        VehicleHistory history = new VehicleHistory();
+        history.setStartOfOwnership(LocalDateTime.now());
+        history.setVehicle(createVehicle(request));
+        history.setCurrentOwner(getOrRegisterClient(request));
+        vehicleHistoryRepository.save(history);
         return createVehicle(request);
     }
 
+    private Client getOrRegisterClient(VehicleRegistrationRequest request) {
+        Optional<Client> optionalClient = clientRepository.getClientByIdentityNumber(request.clientRequest().identityNumber());
+        Client client = null;
+        client = optionalClient.orElseGet(() -> clientServiceImpl.createClient(request.clientRequest()));
+        clientRepository.save(client);
+        return client;
+    }
+
     private Vehicle createVehicle(VehicleRegistrationRequest request) {
-        return new Vehicle(
+        Vehicle vehicle = new Vehicle(
                 request.vinNumber(),
                 request.registrationNumber(),
                 request.manufacturer(),
@@ -55,32 +70,9 @@ public class VehicleServiceImpl implements VehicleService {
                 request.fuel(),
                 request.engineCapacity(),
                 request.yearOfProduction(),
-                LocalDateTime.now(),
-                createHistory(request)
-        );
+                LocalDateTime.now());
+        vehicleRepository.save(vehicle);
+        return vehicle;
     }
 
-    private List<VehicleHistory> createHistory(VehicleRegistrationRequest request) {
-        List<VehicleHistory> historyList = new ArrayList<>();
-
-        if (clientRepository.existsByIdentityNumber(request.clientRequest().identityNumber())) {
-            Client registeredClient = clientRepository.getClientByIdentityNumber(request.clientRequest().identityNumber());
-            VehicleHistory history = new VehicleHistory();
-            history.setStartOfOwnership(LocalDateTime.now());
-            history.setVehicle(createVehicle(request));
-            history.setCurrentOwner(registeredClient);
-            historyList.add(history);
-        } else {
-            Client client = clientServiceImpl.createClient(request.clientRequest());
-            VehicleHistory history = new VehicleHistory();
-            history.setStartOfOwnership(LocalDateTime.now());
-            history.setVehicle(createVehicle(request));
-            history.setCurrentOwner(client);
-            historyList.add(history);
-        }
-
-        vehicleHistoryRepository.saveAll(historyList);
-
-        return historyList;
-    }
 }

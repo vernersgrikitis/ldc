@@ -1,6 +1,7 @@
 package com.example.ldc.controller;
 
 import com.example.ldc.client.*;
+import com.example.ldc.requests.ChangeOwnerRequest;
 import com.example.ldc.requests.SaveClientRequest;
 import com.example.ldc.requests.VehicleRegistrationRequest;
 import com.example.ldc.vehicle.*;
@@ -35,8 +36,6 @@ public class UserController {
         return clientService.getClient(email);
     }
 
-
-
     @RequestMapping(value = "/save-vehicle", method = RequestMethod.POST)
     public void saveVehicle(@RequestBody VehicleRegistrationRequest request) {
         String message = "Vehicle "
@@ -46,4 +45,10 @@ public class UserController {
         vehicleService.saveVehicle(request);
         throw new ResponseStatusException(HttpStatus.CREATED, message);
     }
+
+    @RequestMapping(value = "/change-owner", method = RequestMethod.PUT)
+    public void changeOwner(@RequestBody ChangeOwnerRequest request) {
+        //
+    }
+
 }
