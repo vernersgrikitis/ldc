@@ -2,6 +2,7 @@ package com.example.ldc.vehiclehistory;
 
 import com.example.ldc.client.Client;
 import com.example.ldc.vehicle.Vehicle;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -16,12 +17,14 @@ public class VehicleHistory {
     private LocalDateTime endOfOwnership;
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
+    @JsonManagedReference
     private Vehicle vehicle;
     @ManyToOne
     @JoinColumn(name = "previous_owner_id")
     private Client previousOwner;
     @ManyToOne
     @JoinColumn(name = "current_owner_id")
+    @JsonManagedReference
     private Client currentOwner;
 
     public VehicleHistory(LocalDateTime startOfOwnership, LocalDateTime endOfOwnership, Vehicle vehicle, Client previousOwner, Client currentOwner) {
