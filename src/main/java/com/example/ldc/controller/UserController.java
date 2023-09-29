@@ -5,6 +5,7 @@ import com.example.ldc.requests.ChangeOwnerRequest;
 import com.example.ldc.requests.SaveClientRequest;
 import com.example.ldc.requests.VehicleRegistrationRequest;
 import com.example.ldc.vehicle.*;
+import com.example.ldc.vehiclehistory.VehicleHistory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,7 +34,7 @@ public class UserController {
     @GetMapping("/{email}/data")
     @ResponseBody
     public GetClientResponse getClient(@PathVariable("email") String email) {
-        return clientService.getClient(email);
+        return clientService.getClientByEmail(email);
     }
 
     @RequestMapping(value = "/save-vehicle", method = RequestMethod.POST)
@@ -48,7 +49,17 @@ public class UserController {
 
     @RequestMapping(value = "/change-owner", method = RequestMethod.PUT)
     public void changeOwner(@RequestBody ChangeOwnerRequest request) {
-        //
+        vehicleService.changeOwner(request);
     }
 
+    @DeleteMapping(value = "/delete-all")
+    public void deleteAll() {
+        vehicleService.deleteAll();
+    }
+
+    @GetMapping("/vehicle-history/{id}")
+    @ResponseBody
+    public VehicleHistory getVehicleHistoryById(@PathVariable("id") Long id) {
+        return vehicleService.getVehicleHistoryById(id);
+    }
 }

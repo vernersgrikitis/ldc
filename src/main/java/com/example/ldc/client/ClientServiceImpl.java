@@ -28,13 +28,23 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public GetClientResponse getClient(String email) {
+    public GetClientResponse getClientByEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$";
         if(!email.matches(emailRegex)) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is not valid! ");
     }
         Optional<Client> client = clientRepository.findClientByEmail(email);
         return clientResponse(client.get());
+    }
+
+
+    public Client getClientByIdentificationNumber(String idNumber) {
+        Optional<Client> optionalClient = clientRepository.getClientByIdentityNumber(idNumber);
+        Client client = new Client();
+        if (optionalClient.isPresent()) {
+            client = optionalClient.get();
+        }
+        return client;
     }
 
     private Client checkClient(SaveClientRequest request) {

@@ -1,6 +1,7 @@
 package com.example.ldc.vehicle;
 
 import com.example.ldc.vehiclehistory.VehicleHistory;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -24,6 +25,7 @@ public class Vehicle {
     private LocalDateTime vehicleRegistrationDate;
     @OneToMany(mappedBy = "vehicle")
     @Cascade(CascadeType.ALL)
+    @JsonBackReference
     private List<VehicleHistory> ownershipHistory;
 
     public Vehicle(String vinNumber, String registrationNumber, String manufacturer, String model, String fuel, String engineCapacity, Integer yearOfProduction, LocalDateTime vehicleRegistrationDate) {
